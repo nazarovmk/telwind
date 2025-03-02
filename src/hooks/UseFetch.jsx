@@ -1,29 +1,29 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 export function UseFetch(url) {
   const [data, setData] = useState(null);
-  const [isPending, setisPending] = useState(false);
+  const [isPending, setIsPending] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getData = async () => {
-      setisPending(true);
+    const fetchData = async () => {
       try {
-        const req = await fetch(url);
-        if (!req.ok) {
-          throw new Error("Data not found");
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
         }
 
-        const data = await req.json();
-        setData(data);
-      } catch (error) {
-        console.log(err.message);
+        const jsonData = await res.json();
+        setData(jsonData);
+      } catch (err) {
         setError(err.message);
       } finally {
-        setisPending(false);
+        setIsPending(false);
       }
     };
-    getData();
+
+    fetchData();
   }, [url]);
 
   return { data, isPending, error };

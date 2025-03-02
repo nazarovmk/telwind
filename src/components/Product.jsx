@@ -1,21 +1,25 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FaShoppingBasket } from "react-icons/fa";
+import { IoMdAddCircle, IoIosRemoveCircle } from "react-icons/io";
 import { useState } from "react";
+import { GlobalProvider } from "../hooks/GlobalProvider";
 
 function Product({ product }) {
   const [isLiked, setIsLiked] = useState(false);
+  const { id, title } = product;
+  const { dispatch } = GlobalProvider();
 
   return (
     <div className="bg-base-300 pt-0 pl-[20px] pb-[20px] pr-[7px] rounded-2xl cursor-pointer transition-transform duration-100 ease-in-out hover:translate-x-2 hover:-translate-x-2">
       <div className="relative inline-block">
         <img
-          className="mb-2 flex w-[250px] h-[250px] items-center"
+          className="mb-2 w-60 h-60 object-contain"
           src={product.images[0]}
           alt=""
         />
         <button
           className={`btn btn-circle absolute top-0 right-0 m-2 bg-white shadow-lg transition-colors duration-200 ${
-            isLiked ? "text-red-500" : "text-gray-500"
+            isLiked ? "text-red-600" : "text-gray-500"
           }`}
           onClick={() => setIsLiked(!isLiked)}
         >
@@ -36,7 +40,7 @@ function Product({ product }) {
         </button>
       </div>
 
-      <Link to={"/product"}>
+      <Link to={`/product/${id}`}>
         <h2 className="text-xl font-semibold mb-1">{product.title}</h2>
       </Link>
       <p className="text-lg font-bold text-gray-400 mb-2">
@@ -45,12 +49,29 @@ function Product({ product }) {
       <p className="text-gray-500 font-medium">
         {product.discountPercentage} - chegirma
       </p>
-      <span className="flex items-center justify-between">
+      <span className="flex items-center justify-between mb-4">
         <p className="text-xl font-semibold">{product.price} - sum</p>
         <Link to={"/card"}>
           <FaShoppingBasket className="w-[30px] h-[30px]" />
         </Link>
       </span>
+      <div className="flex border border-gray-400 p-4 justify-between rounded-xl">
+        <IoIosRemoveCircle
+          onClick={(e) => {
+            e.preventDefault();
+            dispatch({ type: "DELETE_PRODUCT", payload: product.id });
+          }}
+          className="text-xl"
+        />
+
+        <IoMdAddCircle
+          onClick={(e) => {
+            e.preventDefault();
+            dispatch({ type: "ADD_PRODUCT", payload: product });
+          }}
+          className="text-xl"
+        />
+      </div>
     </div>
   );
 }
